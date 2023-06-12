@@ -2,6 +2,7 @@
 #include <vector>
 #include <cmath>
 #include <fstream>
+#include <string>
 
 using namespace std;
 
@@ -64,10 +65,9 @@ bool FindAdjMin(int &mini, int &minj){
     return true;
 }
 
-void PrimFindMST(){
+void PrimFindMST(int &mini, int &minj){
     ClearSelected();
     bool flag = true;
-    int mini, minj;
     FindMin(mini, minj);
     selected[mini][minj] = selected[minj][mini] = verticies[mini] = verticies[minj] = true;
     while (flag) {
@@ -87,6 +87,7 @@ int main() {
     ifstream fin("input.txt");
     ofstream fout("output.txt");
     int n;
+    int mini=0, minj=0;
     fin >> n;
     vector <int> temp;
     for (int i = 0; i < n; i++){
@@ -101,7 +102,7 @@ int main() {
         G.push_back(temp);
         temp.clear();
     }
-    PrimFindMST();
+    PrimFindMST(mini, minj);
     fout << sum << endl;
     for (int i = 0; i < answer.size(); i+=2){
         fout << answer[i]<< " " << answer[i+1] << endl;
