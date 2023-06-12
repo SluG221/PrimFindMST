@@ -11,8 +11,6 @@ vector <vector <bool>> selected;
 vector <bool> verticies;
 vector <int> answer;
 
-int sum = 0;
-
 void ClearSelected(){
     verticies.clear();
     selected.clear();
@@ -27,7 +25,7 @@ void ClearSelected(){
     }
 }
 
-void FindMin(int &mini, int &minj){
+void FindMin(int &mini, int &minj, int &sum){
     int min = INFINITY;
     for (int i = 0; i < G.size(); i++){
         for (int j = 0; j < G.size(); j++){
@@ -41,7 +39,7 @@ void FindMin(int &mini, int &minj){
     sum += min;
 }
 
-bool FindAdjMin(int &mini, int &minj){
+bool FindAdjMin(int &mini, int &minj, int &sum){
     int mini2 = mini, minj2 = minj;
     int min = INFINITY;
 
@@ -65,15 +63,15 @@ bool FindAdjMin(int &mini, int &minj){
     return true;
 }
 
-void PrimFindMST(int &mini, int &minj){
+void PrimFindMST(int &mini, int &minj, int &sum){
     ClearSelected();
     bool flag = true;
-    FindMin(mini, minj);
+    FindMin(mini, minj, sum);
     selected[mini][minj] = selected[minj][mini] = verticies[mini] = verticies[minj] = true;
     while (flag) {
         answer.push_back(min(mini+1, minj+1));
         answer.push_back(max(mini+1, minj+1));
-        flag = FindAdjMin(mini, minj);
+        flag = FindAdjMin(mini, minj, sum);
         if (!selected[mini][minj])
             selected[mini][minj] = selected[minj][mini] = verticies[mini] = verticies[minj] = true;
         else
@@ -87,7 +85,8 @@ int main() {
     ifstream fin("input.txt");
     ofstream fout("output.txt");
     int n;
-    int mini=0, minj=0;
+    int sum = 0;
+    int mini = 0, minj = 0;
     fin >> n;
     vector <int> temp;
     for (int i = 0; i < n; i++){
@@ -102,7 +101,7 @@ int main() {
         G.push_back(temp);
         temp.clear();
     }
-    PrimFindMST(mini, minj);
+    PrimFindMST(mini, minj, sum);
     fout << sum << endl;
     for (int i = 0; i < answer.size(); i+=2){
         fout << answer[i]<< " " << answer[i+1] << endl;
