@@ -1,19 +1,16 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include <fstream>
 
 using namespace std;
 
 vector <vector <int>> G;
 vector <vector <bool>> selected;
 vector <bool> verticies;
+vector <int> answer;
 
-map <string, int> commands{
-        {"test", 1},
-        {"print", 2},
-        {"input", 3},
-        {"prim", 4},
-        {"close", 5}
-
-};
+int sum = 0;
 
 void ClearSelected(){
     verticies.clear();
@@ -29,60 +26,6 @@ void ClearSelected(){
     }
 }
 
-void Test(){
-    G = {
-            {0, 9, 75, 0, 0},
-            {9, 0, 95, 19, 42},
-            {75, 95, 0, 51, 66},
-            {0, 19, 51, 0, 31},
-            {0, 42, 66, 31, 0}
-    };
-}
-
-void PrintG(){
-    if (G.empty()){
-        cout << "Graph is empty\n\n";
-        return;
-    }
-    cout << "Adjacency matrix:\n";
-    for (int i = 0; i < G.size(); i++) {
-        for (int j = 0; j < G.size(); j++)
-            cout << G[i][j] << " ";
-        cout << endl;
-    }
-    cout << endl;
-}
-
-void Input(){
-    G.clear();
-    vector <int> temp;
-    int n;
-    cout << "Enter the number of vertices: ";
-    cin >> n;
-    cout << "Enter the adjacency matrix:\n";
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            int x;
-            cin >> x;
-            temp.push_back(x);
-        }
-        G.push_back(temp);
-        temp.clear();
-    }
-}
-
-bool Check(){
-    for (int i = 0; i < G.size(); i++) {
-        if (G[i][i] != 0)
-            return false;
-        for (int j = 0; j < G.size(); j++) {
-            if (G[i][j] != G[j][i])
-                return false;
-        }
-    }
-    return true;
-}
-
 void FindMin(int &mini, int &minj){
     int min = INFINITY;
     for (int i = 0; i < G.size(); i++){
@@ -94,6 +37,7 @@ void FindMin(int &mini, int &minj){
             }
         }
     }
+    sum += min;
 }
 
 bool FindAdjMin(int &mini, int &minj){
@@ -116,16 +60,19 @@ bool FindAdjMin(int &mini, int &minj){
         return false;
     mini = mini2;
     minj = minj2;
+    sum += min;
     return true;
 }
 
 void PrimFindMST(){
+    ClearSelected();
     bool flag = true;
     int mini, minj;
     FindMin(mini, minj);
     selected[mini][minj] = selected[minj][mini] = verticies[mini] = verticies[minj] = true;
     while (flag) {
-        cout << mini+1 << "-" << minj+1 << endl;
+        answer.push_back(min(mini+1, minj+1));
+        answer.push_back(max(mini+1, minj+1));
         flag = FindAdjMin(mini, minj);
         if (!selected[mini][minj])
             selected[mini][minj] = selected[minj][mini] = verticies[mini] = verticies[minj] = true;
@@ -137,55 +84,27 @@ void PrimFindMST(){
 }
 
 int main() {
-    string command;
-
-    while (cout << ">", cin >> command){
-
-        switch(commands[command])
-        {
-            case 1:
-            {
-                Test();
-                ClearSelected();
-                PrintG();
-                break;
-            }
-
-            case 2:
-            {
-                PrintG();
-                break;
-            }
-
-            case 3:
-            {
-                Input();
-                if (!Check())
-                    cout << "Incorrect data\n\n";
-                else
-                    cout << endl;
-                ClearSelected();
-                break;
-            }
-
-            case 4:
-            {
-                PrimFindMST();
-                ClearSelected();
-                break;
-            }
-
-            case 5:
-            {
-                exit(0);
-            }
-
-            default:
-            {
-                cout << "Unknown command\n\n";
-                break;
-            }
+    ifstream fin("input.txt");
+    ofstream fout("output.txt");
+    int n;
+    fin >> n;
+    vector <int> temp;
+    for (int i = 0; i < n; i++){
+        for (int j = 0; j < n; j++){
+            string x;
+            fin >> x;
+            if (x == "~")
+                temp.push_back(0);
+            else
+                temp.push_back(stoi(x));
         }
+        G.push_back(temp);
+        temp.clear();
+    }
+    PrimFindMST();
+    fout << sum << endl;
+    for (int i = 0; i < answer.size(); i+=2){
+        fout << answer[i]<< " " << answer[i+1] << endl;
     }
     return 0;
 }
