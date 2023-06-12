@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <cmath>
 #include <fstream>
 #include <string>
 
@@ -11,7 +10,7 @@ vector <vector <bool>> selected;
 vector <bool> verticies;
 vector <int> answer;
 
-void ClearSelected(){
+void ClearSelected() {
     verticies.clear();
     selected.clear();
     vector <bool> temp;
@@ -25,28 +24,28 @@ void ClearSelected(){
     }
 }
 
-void FindMin(int &mini, int &minj, int &sum){
-    int min = INFINITY;
-    for (int i = 0; i < G.size(); i++){
-        for (int j = 0; j < G.size(); j++){
-            if (G[i][j] != 0 && G[i][j] < min){
+void FindMin(int& mini, int& minj, int& sum) {
+    int min = 2147483647;
+    for (int i = 0; i < G.size(); i++) {
+        for (int j = 0; j < G.size(); j++) {
+            if (G[i][j] != 0 && G[i][j] < min) {
                 min = G[i][j];
                 mini = i;
                 minj = j;
             }
         }
     }
-    sum += min;
+    sum = min;
 }
 
-bool FindAdjMin(int &mini, int &minj, int &sum){
+bool FindAdjMin(int& mini, int& minj, int& sum) {
     int mini2 = mini, minj2 = minj;
-    int min = INFINITY;
+    int min = 2147483647;
 
-    for (int i = 0; i < G.size(); i++){
-        if (verticies[i]){
-            for (int j = 0; j < G.size(); j++){
-                if (!selected[i][j] && !verticies[j] && G[i][j] < min && G[i][j] != 0){
+    for (int i = 0; i < G.size(); i++) {
+        if (verticies[i]) {
+            for (int j = 0; j < G.size(); j++) {
+                if (!selected[i][j] && !verticies[j] && G[i][j] < min && G[i][j] != 0) {
                     min = G[i][j];
                     mini2 = i;
                     minj2 = j;
@@ -63,14 +62,14 @@ bool FindAdjMin(int &mini, int &minj, int &sum){
     return true;
 }
 
-void PrimFindMST(int &mini, int &minj, int &sum){
+void PrimFindMST(int& mini, int& minj, int& sum) {
     ClearSelected();
     bool flag = true;
     FindMin(mini, minj, sum);
     selected[mini][minj] = selected[minj][mini] = verticies[mini] = verticies[minj] = true;
     while (flag) {
-        answer.push_back(min(mini+1, minj+1));
-        answer.push_back(max(mini+1, minj+1));
+        answer.push_back(min(mini + 1, minj + 1));
+        answer.push_back(max(mini + 1, minj + 1));
         flag = FindAdjMin(mini, minj, sum);
         if (!selected[mini][minj])
             selected[mini][minj] = selected[minj][mini] = verticies[mini] = verticies[minj] = true;
@@ -78,7 +77,6 @@ void PrimFindMST(int &mini, int &minj, int &sum){
             G[mini][minj] = G[minj][mini] = 0;
 
     }
-    cout << endl;
 }
 
 int main() {
@@ -89,8 +87,8 @@ int main() {
     int mini = 0, minj = 0;
     fin >> n;
     vector <int> temp;
-    for (int i = 0; i < n; i++){
-        for (int j = 0; j < n; j++){
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
             string x;
             fin >> x;
             if (x == "~")
@@ -103,8 +101,8 @@ int main() {
     }
     PrimFindMST(mini, minj, sum);
     fout << sum << endl;
-    for (int i = 0; i < answer.size(); i+=2){
-        fout << answer[i]<< " " << answer[i+1] << endl;
+    for (int i = 0; i < answer.size(); i += 2) {
+        fout << answer[i] << " " << answer[i + 1] << endl;
     }
     return 0;
 }
